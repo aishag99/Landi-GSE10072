@@ -278,3 +278,60 @@ print(results_FDR[1:20, c("Module", "GeneSet", "Overlap", "FoldEnrichment", "PVa
 
 cat("\n\nENRICHMENT ANALYSIS COMPLETE!\n")
 cat("Check the Enrichment_Results folder for full output.\n")
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+.libPaths("/c4/home/reliscu/R/x86_64-pc-linux-gnu-library/4.1-CBI-gcc8")
+
+library(dplyr)
+library(GSEABase)
+library(data.table)
+
+source("/home/rebecca/code/GSEA/GSEA_functions.R")
+
+command_args <- commandArgs(trailingOnly=T)
+i <- as.numeric(command_args[1])
+
+dirs <- list.dirs(path="/c4/home/reliscu/kevin_datasets/ABI/makeFM_RNAseq", full.names=T, recursive=F)
+# dirs <- list.dirs(path="/c4/home/reliscu/kevin_datasets/ABI/makeFM_microarray", full.names=T, recursive=F)
+
+setwd(dirs[i])
+print(dirs[i])
+
+platform <- "hgug4112a"
+kme_unique_id <- "ENTREZID"
+# kme_unique_id <- "PROBEID"
+
+kme_unique_id_col <- 1
+n_threads <- 10
+min_size <- 5
+max_size <- 500
+tables_path <- "/c4/home/reliscu/mapping_tables/2022-11-02/"
+
+############################################# Oldham #############################################
+
+load("/c4/home/reliscu/gene_sets/MO_sets_mapped_formatted.RData")
+
+set_source <- "MO"
+legend <- MO_legend
+gene_sets <- MO_sets_mapped
+
+GSHGloop(set_source, gene_sets, legend, kmecut1="topmodposbc", topx=NULL, exclude="none", pvalcut1=NULL, min_size, max_size, map_sets=F, map_kme=T, kme_unique_id, kme_unique_id_col, platform, tables_path, n_threads)
+cat("\nMyGSHGloop topmodposbc complete\n")
+
+GSHGloop(set_source, gene_sets, legend, kmecut1="topmodposfdr", topx=NULL, exclude="none", pvalcut1=NULL, min_size, max_size, map_sets=F, map_kme=T, kme_unique_id, kme_unique_id_col, platform, tables_path, n_threads)
+cat("\nMyGSHGloop topmodposfdr complete\n")
+
+############################################# Broad #############################################
+
+load("/c4/home/reliscu/gene_sets/broad_7.4_sets_mapped_formatted.RData")
+
+set_source <- "BROAD"
+legend <- broad_legend
+gene_sets <- broad_sets_mapped
+
+GSHGloop(set_source, gene_sets, legend, kmecut1="topmodposbc", topx=NULL, exclude="none", pvalcut1=NULL, min_size, max_size, map_sets=F, map_kme=T, kme_unique_id, kme_unique_id_col, platform, tables_path, n_threads)
+cat("\nBroadGSHGloop topmodposbc complete\n")
+
+GSHGloop(set_source, gene_sets, legend, kmecut1="topmodposfdr", topx=NULL, exclude="none", pvalcut1=NULL, min_size, max_size, map_sets=F, map_kme=T, kme_unique_id, kme_unique_id_col, platform, tables_path, n_threads)
+cat("\nBroadGSHGloop topmodposfdr complete\n")
